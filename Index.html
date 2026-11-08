@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Diwali Greetings & Celebrations</title>
+  <style>
+    :root {
+      --primary-gold: #ffd700;
+      --deep-maroon: #2b0000;
+      --festive-red: #d62828;
+      --glow-orange: #ff7b00;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--deep-maroon);
+      background-image: radial-gradient(circle at center, #4a0000 0%, #150000 100%);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    header {
+      z-index: 10;
+      text-align: center;
+      padding: 20px 10px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      border-bottom: 2px solid var(--primary-gold);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: var(--primary-gold);
+      text-shadow: 0 0 10px var(--glow-orange), 0 0 20px var(--primary-gold);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 1.1rem;
+      color: #ffe6a7;
+    }
+
+    .main-container {
+      z-index: 10;
+      max-width: 700px;
+      width: 90%;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    /* Wish Card Section */
+    .wish-card {
+      background: rgba(43, 0, 0, 0.7);
+      border: 2px solid var(--primary-gold);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+      margin-bottom: 25px;
+    }
+
+    .wish-card input {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid var(--primary-gold);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    .wish-card input::placeholder {
+      color: #ccc;
+    }
+
+    .wish-message {
+      font-size: 1.3rem;
+      line-height: 1.6;
+      color: #fff8e7;
+      margin-bottom: 15px;
+    }
+
+    .controls-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--festive-red), var(--glow-orange));
+      color: white;
+      border: 1px solid var(--primary-gold);
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--glow-orange);
+    }
+
+    /* Interactive Diyas */
+    .diya-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+    }
+
+    .diya {
+      position: relative;
+      width: 70px;
+      height: 35px;
+      background: #8b4513;
+      border-radius: 0 0 50px 50px;
+      border: 2px solid var(--primary-gold);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .flame {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 26px;
+      background: radial-gradient(ellipse at bottom, var(--primary-gold) 0%, var(--glow-orange) 60%, transparent 100%);
+      border-radius: 50% 50% 20% 20%;
+      filter: drop-shadow(0 0 8px var(--glow-orange));
+      animation: flicker 0.1s infinite alternate;
+      display: none;
+    }
+
+    .diya.lit .flame {
+      display: block;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1) rotate(-1deg); }
+      100% { transform: translateX(-50%) scale(1.1) rotate(1deg); }
+    }
+
+    /* Modal for Sharing */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #3d0000;
+      border: 2px solid var(--primary-gold);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 85%;
+    }
+
+    .modal-content h2 {
+      color: var(--primary-gold);
+      margin-bottom: 15px;
+    }
+
+    .share-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .whatsapp-btn {
+      background: #25D366;
+      border: none;
+    }
+
+    .close-btn {
+      margin-top: 15px;
+      background: #555;
+    }
+
+    footer {
+      z-index: 10;
+      padding: 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--primary-gold);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="fireworksCanvas"></canvas>
+
+  <header>
+    <h1>🪔 Happy Diwali 🪔</h1>
+    <p class="subtitle">Wishing you light, warmth, health, and prosperity!</p>
+  </header>
+
+  <div class="main-container">
+
+    <div class="wish-card">
+      <input type="text" id="recipientInput" placeholder="Enter recipient name (e.g. Grandma)" oninput="updateWish()" />
+      <div class="wish-message" id="wishMessage">
+        Wishing you and your family a bright, prosperous, and joyful Diwali! ✨
+      </div>
+      <button onclick="openShareModal()">✨ Share Wish & App ✨</button>
+    </div>
+
+    <p style="margin-bottom: 10px; color: #ffd700;">Click on the Diyas to light them up:</p>
+    <div class="diya-container">
+      <div class="diya" onclick="toggleDiya(this)"><div class="flame"></div></div>
+      <div class="diya lit" onclick="toggleDiya(this)"><div class="flame"></div></div>
+      <div class="diya" onclick="toggleDiya(this)"><div class="flame"></div></div>
+    </div>
+
+    <div class="controls-panel">
+      <button onclick="launchFireworksBatch()">🎆 Launch Fireworks</button>
+      <button onclick="toggleAudio()">🔊 Play Festive Audio</button>
+    </div>
+
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal" id="shareModal">
+    <div class="modal-content">
+      <h2>Share Festive Greetings</h2>
+      <p>Send your Diwali wish directly to friends and family!</p>
+      
+      <div class="share-options">
+        <button class="whatsapp-btn" onclick="shareWhatsApp()">📱 Share via WhatsApp</button>
+        <button onclick="copyLink()">📋 Copy Link</button>
+      </div>
+
+      <button class="close-btn" onclick="closeShareModal()">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    Made with ✨ for a bright Diwali Celebration
+  </footer>
+
+  <script>
+    // Audio Synthesis via Web Audio API
+    let audioCtx = null;
+    let isPlayingAudio = false;
+    let audioLoopId = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTone(freq, duration, type = 'sine') {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isPlayingAudio = !isPlayingAudio;
+      if (isPlayingAudio) {
+        audioLoopId = setInterval(() => {
+          const notes = [261.63, 329.63, 392.00, 523.25]; // C E G C
+          const note = notes[Math.floor(Math.random() * notes.length)];
+          playTone(note, 1.5);
+        }, 800);
+      } else {
+        clearInterval(audioLoopId);
+      }
+    }
+
+    // Diya Interaction
+    function toggleDiya(el) {
+      initAudio();
+      el.classList.toggle('lit');
+      if (el.classList.contains('lit')) {
+        playTone(600, 0.2, 'triangle');
+      }
+    }
+
+    // Dynamic Wish Customization
+    function updateWish() {
+      const name = document.getElementById('recipientInput').value.trim();
+      const wishText = document.getElementById('wishMessage');
+      if (name) {
+        wishText.innerHTML = `Dear ${name}, wishing you and your family a bright, prosperous, and joyful Diwali! ✨`;
+      } else {
+        wishText.innerHTML = `Wishing you and your family a bright, prosperous, and joyful Diwali! ✨`;
+      }
+    }
+
+    // Canvas Fireworks Simulation
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = Math.random() * 3 + 1;
+        this.velocity = {
+          x: (Math.random() - 0.5) * 8,
+          y: (Math.random() - 0.5) * 8
+        };
+        this.alpha = 1;
+        this.friction = 0.98;
+        this.gravity = 0.05;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      update() {
+        this.velocity.x *= this.friction;
+        this.velocity.y *= this.friction;
+        this.velocity.y += this.gravity;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.alpha -= 0.015;
+      }
+    }
+
+    function createFirework(x, y) {
+      initAudio();
+      playTone(150 + Math.random() * 200, 0.4, 'sawtooth');
+      const colors = ['#ffd700', '#ff4500', '#00ffcc', '#ff007f', '#ffffff'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function launchFireworksBatch() {
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          createFirework(
+            Math.random() * canvas.width,
+            Math.random() * (canvas.height * 0.6)
+          );
+        }, i * 300);
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(43, 0, 0, 0.2)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle, index) => {
+        if (particle.alpha > 0) {
+          particle.update();
+          particle.draw();
+        } else {
+          particles.splice(index, 1);
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Share Modal Logic
+    function openShareModal() {
+      document.getElementById('shareModal').style.display = 'flex';
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').style.display = 'none';
+    }
+
+    function shareWhatsApp() {
+      const wish = document.getElementById('wishMessage').innerText;
+      const url = window.location.href;
+      const text = encodeURIComponent(`🪔 ${wish}\n\nCheck out this interactive Diwali page: ${url}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard! You can now paste and send it.');
+      });
+    }
+  </script>
+</body>
+</html>
